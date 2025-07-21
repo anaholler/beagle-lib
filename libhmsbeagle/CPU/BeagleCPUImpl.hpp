@@ -462,9 +462,9 @@ int BeagleCPUImpl<BEAGLE_CPU_GENERIC>::createInstance(int tipCount,
                 partitionCount = hardwareThreads/2;
             }
             int* patternPartitions = (int*) malloc(sizeof(int) * kPatternCount);
-            int partitionSize = kPatternCount/partitionCount;
+
             for (int i=0; i<kPatternCount; i++) {
-                int sitePartition = i/partitionSize;
+                int sitePartition = floor(i*double(partitionCount)/kPatternCount);
                 if (sitePartition > partitionCount - 1)
                     sitePartition = partitionCount - 1;
                 patternPartitions[i] = sitePartition;
@@ -539,9 +539,8 @@ int BeagleCPUImpl<BEAGLE_CPU_GENERIC>::setCPUThreadCount(int threadCount) {
             }
 
             int* patternPartitions = (int*) malloc(sizeof(int) * kPatternCount);
-            int partitionSize = kPatternCount/partitionCount;
             for (int i=0; i<kPatternCount; i++) {
-                int sitePartition = i/partitionSize;
+                int sitePartition = floor(i*double(partitionCount)/kPatternCount);
                 if (sitePartition > partitionCount - 1)
                     sitePartition = partitionCount - 1;
                 patternPartitions[i] = sitePartition;
