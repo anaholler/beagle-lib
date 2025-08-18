@@ -464,7 +464,7 @@ int BeagleCPUImpl<BEAGLE_CPU_GENERIC>::createInstance(int tipCount,
 
             std::vector<int> partitionForPattern(kPatternCount);
             for (int p=0; p<kPatternCount; p++) {
-                partitionForPattern[p] = floor(  (double(p)/kPatternCount) * partitionCount  );
+                partitionForPattern[p] = (p * partitionCount) / kPatternCount;
             }
             setPatternPartitions(partitionCount, partitionForPattern.data());
 
@@ -537,7 +537,7 @@ int BeagleCPUImpl<BEAGLE_CPU_GENERIC>::setCPUThreadCount(int threadCount) {
 
             std::vector<int> partitionForPattern(kPatternCount);
             for (int p=0; p<kPatternCount; p++) {
-                partitionForPattern[p] = floor(  (double(p)/kPatternCount) * partitionCount  );
+                partitionForPattern[p] = (p * partitionCount) / kPatternCount;
             }
             setPatternPartitions(partitionCount, partitionForPattern.data());
 
