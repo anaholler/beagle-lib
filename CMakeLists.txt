@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.12)
 project(BEAGLE)
 
 set(BEAGLE_PACKAGE_NAME "libhmsbeagle")
 set(BEAGLE_VERSION_MAJOR "4")
-set(BEAGLE_VERSION_MINOR "0")
-set(BEAGLE_VERSION_PATCH "1")
+set(BEAGLE_VERSION_MINOR "1")
+set(BEAGLE_VERSION_PATCH "0")
 
 set(GENERIC_API_VERSION "1")
 
@@ -16,12 +16,49 @@ message(STATUS "BEAGLE_PLUGIN_VERSION = ${BEAGLE_PLUGIN_VERSION}")
 
 set(BEAGLE_OPTIMIZE_FOR_NATIVE_ARCH true)
 
+set(BEAGLE_CPACK_PACKAGE_NAME "BEAGLE")
+set(BASTA_EXTENSION "BIT")
+
 option(BUILD_OPENCL "Build beagle with OpenCL library" ON)
 option(BUILD_CUDA "Build beagle with CUDA library" ON)
 option(BUILD_JNI "Build beagle with JNI library" ON)
+option(BUILD_OPENMP "Build beagle with OpenMP library" OFF)
 option(BUILD_SSE "Build beagle with SSE library" ON)
+option(BUILD_BIT "Build beagle with basta library" OFF)
 
 # Old config.h settings
+
+OPTION(BEAGLE_BENCHMARK "Print runtimes" OFF)
+OPTION(BEAGLE_DEBUG_FLOW "Print flow" OFF)
+OPTION(BEAGLE_DEBUG_VALUES "Print debug values" OFF)
+OPTION(BEAGLE_DEBUG_SYNCH "Synchronize threads on GPU for timing" OFF)
+OPTION(BEAGLE_BENCHMARK_ENERGY "Print energy consumption" OFF)
+OPTION(BEAGLE_BASTA_CPU_ACCUM "Use CPU for final accumulation for reduction" OFF)
+
+IF(BEAGLE_BENCHMARK)
+    ADD_DEFINITIONS(-DBEAGLE_BENCHMARK)
+ENDIF(BEAGLE_BENCHMARK)
+
+IF(BEAGLE_BENCHMARK_ENERGY)
+	ADD_DEFINITIONS(-DBEAGLE_BENCHMARK_ENERGY)
+ENDIF(BEAGLE_BENCHMARK_ENERGY)
+
+IF(BEAGLE_DEBUG_FLOW)
+    ADD_DEFINITIONS(-DBEAGLE_DEBUG_FLOW)
+ENDIF(BEAGLE_DEBUG_FLOW)
+
+IF(BEAGLE_DEBUG_VALUES)
+    ADD_DEFINITIONS(-DBEAGLE_DEBUG_VALUES)
+ENDIF(BEAGLE_DEBUG_VALUES)
+
+IF(BEAGLE_DEBUG_SYNCH)
+	ADD_DEFINITIONS(-DBEAGLE_DEBUG_SYNCH)
+ENDIF(BEAGLE_DEBUG_SYNCH)
+
+IF(BEAGLE_BASTA_CPU_ACCUM)
+	ADD_DEFINITIONS(-DBEAGLE_BASTA_CPU_ACCUM)
+ENDIF(BEAGLE_BASTA_CPU_ACCUM)
+
 
 add_definitions(
 	-DPACKAGE_BUGREPORT="beagle-dev@googlegroups.com"
@@ -141,10 +178,22 @@ enable_testing()
 
 add_subdirectory(examples)
 
+IF(BEAGLE_DEBUG_KERNELS)
+	add_subdirectory(tests/basta)
+ENDIF(BEAGLE_DEBUG_KERNELS)
+
 set(CPACK_PACKAGE_VERSION "${BEAGLE_VERSION}")
 set(CPACK_PACKAGE_MAJOR "${BEAGLE_VERSION_MAJOR}")
 set(CPACK_PACKAGE_MINOR "${BEAGLE_VERSION_MINOR}")
 set(CPACK_PACKAGE_PATCH "${BEAGLE_VERSION_PATCH}")
+
+if(BUILD_BIT)
+	set(CPACK_PACKAGE_NAME "${BEAGLE_CPACK_PACKAGE_NAME}-${BASTA_EXTENSION}")
+else(BUILD_BIT)
+	set(CPACK_PACKAGE_NAME "${BEAGLE_CPACK_PACKAGE_NAME}")
+endif(BUILD_BIT)
+
+message(STATUS "CPack package name: ${CPACK_PACKAGE_NAME}")
 
 if(WIN32)
 	set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
@@ -156,7 +205,49 @@ if(WIN32)
     set(CPACK_WIX_LICENSE_RTF "${CMAKE_CURRENT_SOURCE_DIR}/project/beagle-vs-2019-wix/LICENSE.rtf")
     set(CPACK_WIX_UI_BANNER "${CMAKE_CURRENT_SOURCE_DIR}/project/beagle-vs-2019-wix/banner.jpg")
     set(CPACK_WIX_UI_DIALOG "${CMAKE_CURRENT_SOURCE_DIR}/project/beagle-vs-2019-wix/welcome.jpg")
-    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/project/beagle-vs-2019-wix/patch.xml")
+    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/project/beagle-vs-2019-wix/patch.xml") # MAS commented out for testing
+    
+# 	get_cmake_property(CPACK_COMPONENTS_ALL COMPONENTS)
+# 	
+# 	include(CPackComponent)
+# 
+# 	cpack_add_component(main
+# 			DISPLAY_NAME "Main library"
+# 			DESCRIPTION "BEAGLE main library"
+# 			REQUIRED)
+# 
+# 	cpack_add_component(cpu
+#   			DISPLAY_NAME "CPU plugin"
+# 		  	DESCRIPTION "CPU plugin"
+#   			REQUIRED)
+# 
+#   	cpack_add_component(cpu_sse
+#   			DISPLAY_NAME "CPU-SSE plugin"
+#   			DESCRIPTION "CPU-SSE plugin")
+# 
+#   	cpack_add_component(cpu_omp
+#   			DISPLAY_NAME "CPU-OMP plugin"
+#   			DESCRIPTION "CPU-OMP plugin")
+# 
+#   	cpack_add_component(jni
+#   			DISPLAY_NAME "JNI plugin"
+#   			DESCRIPTION "JNI plugin")
+# 
+#   	cpack_add_component(jni_basta
+#   			DISPLAY_NAME "JNI-${BASTA_EXTENSION} plugin"
+#   			DESCRIPTION "JNI-${BASTA_EXTENSION} plugin")
+# 
+#   	cpack_add_component(cuda
+#   			DISPLAY_NAME "CUDA plugin"
+#   			DESCRIPTION "CUDA plugin")
+# 
+#   	cpack_add_component(opencl
+#   			DISPLAY_NAME "OpenCL plugin"
+#   			DESCRIPTION "OpenCL plugin")
+#   			
+# # Install files directly to the root
+# install(FILES my_file.txt DESTINATION "/")
+  			
 endif(WIN32)
 
 if(APPLE)
@@ -168,7 +259,7 @@ if(APPLE)
 	set(CPACK_PRODUCTBUILD_BACKGROUND_UTI "${CMAKE_CURRENT_SOURCE_DIR}/project/beagle-vs-2019-wix/welcome.jpg")
 
 	get_cmake_property(CPACK_COMPONENTS_ALL COMPONENTS)
-
+	
 	include(CPackComponent)
 
 	cpack_add_component(main
@@ -185,6 +276,18 @@ if(APPLE)
   			DISPLAY_NAME "CPU-SSE plugin"
   			DESCRIPTION "CPU-SSE plugin")
 
+  	cpack_add_component(cpu_omp
+  			DISPLAY_NAME "CPU-OMP plugin"
+  			DESCRIPTION "CPU-OMP plugin")
+
+  	cpack_add_component(jni
+  			DISPLAY_NAME "JNI plugin"
+  			DESCRIPTION "JNI plugin")
+
+  	cpack_add_component(jni_basta
+  			DISPLAY_NAME "JNI-${BASTA_EXTENSION} plugin"
+  			DESCRIPTION "JNI-${BASTA_EXTENSION} plugin")
+
   	cpack_add_component(cuda
   			DISPLAY_NAME "CUDA plugin"
   			DESCRIPTION "CUDA plugin")
@@ -194,6 +297,18 @@ if(APPLE)
   			DESCRIPTION "OpenCL plugin")
 
 	set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local")
+	
+	set(CPACK_BUNDLE_APPLE_CERT_APP "Developer ID Applicaton: Marc Suchard (LC992Z5R7E)")
 endif(APPLE)
 
 include(CPack)
+
+if(APPLE)
+#         <exec executable="codesign">
+#             <arg value="-s"/>
+#             <arg value="${AppleSigner}"/>
+#             <arg value="-v"/>
+#             <arg value="${release_dir}/${BEAST_package_name} v${version}.dmg"/>
+#         </exec>
+# codesign -s "Marc Suchard (LC992Z5R7E)" -v release/BEAST\ X\ v10.5.0.dmg 
+endif(APPLE)
