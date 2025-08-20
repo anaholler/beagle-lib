@@ -21,10 +21,10 @@ jobs:
 #           vsversion: '2019'
           toolset: '14.44'
       
-      - uses: Jimver/cuda-toolkit@v0.2.24
-        id: cuda-toolkit
-        with:
-          cuda: '12.5.0'         
+#       - uses: Jimver/cuda-toolkit@v0.2.24
+#         id: cuda-toolkit
+#         with:
+#           cuda: '12.5.0'         
       
 #       - name: Build with BIT
 #         run: |        
