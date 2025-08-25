@@ -75,8 +75,8 @@ jobs:
           wait-for-completion: true
           output-artifact-directory: 'build-signed'
 
-      - name: Debug signed artifact
+      - name: Upload signed BEAGLE installer package
         uses: actions/upload-artifact@v4
         with:
-          name: signed
+          name: BEAGLE_installer_package_signed
           path: build-signed
