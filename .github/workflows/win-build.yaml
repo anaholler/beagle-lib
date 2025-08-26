@@ -18,13 +18,14 @@ jobs:
     
       - uses: ilammy/msvc-dev-cmd@v1 # This action sets up the environment
         with:
-#           vsversion: '2019'
           toolset: '14.44'
       
-#       - uses: Jimver/cuda-toolkit@v0.2.24
-#         id: cuda-toolkit
-#         with:
-#           cuda: '12.5.0'         
+      - uses: Jimver/cuda-toolkit@v0.2.24
+        id: cuda-toolkit
+        with:
+          cuda: '12.5.0'         
+      
+      # Build BEAGLE with backwards-in-time support      
       
       - name: Build BEAGLE with BIT
         run: |        
@@ -34,12 +35,6 @@ jobs:
           devenv BEAGLE.sln /build "Release"
           cpack .
            
-#       - name: Upload CPack files for debugging
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: CPack files
-#           path: build_bit
-# 
       - name: Upload BIT installer package
         id: upload-unsigned-bit-installer-artifact
         if: success()
@@ -64,7 +59,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BIT_installer_package_signed
-          path: build-bit--signed                
+          path: build-bit-signed 
+          
+      # Build BEAGLE without backwards-in-time support                            
 
       - name: Build BEAGLE
         run: |        
@@ -99,3 +96,10 @@ jobs:
         with:
           name: BEAGLE_installer_package_signed
           path: build-signed
+                  
+#       - name: Upload CPack files for debugging
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: CPack files
+#           path: build_bit
+#           
