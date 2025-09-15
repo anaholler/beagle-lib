@@ -54,7 +54,7 @@ jobs:
       env:
         APPLICATION_SIGNER: ${{ secrets.APPLE_SIGNER }}
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         cmake .. -DBUILD_BIT=ON -DBUILD_OPENCL=ON
         make
@@ -75,7 +75,7 @@ jobs:
       env:
         APPLICATION_SIGNER: ${{ secrets.APPLE_SIGNER }}
       run: |
-        mkdir build
+        mkdir -p build
         cd build
         cmake .. -DBUILD_BIT=OFF -DBUILD_OPENCL=ON
         make
