@@ -94,11 +94,11 @@ jobs:
         
     - name: Test installation
       run: |
-        sudo installer -pkg "build/BEAGLE-4.1.0.-Darwin.pkg" -target /
+        sudo installer -pkg "build/BEAGLE-4.1.0-Darwin.pkg" -target /
                             
     - name: Upload BIT package
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: Mac_BIT_installer
-        path: build/BEAGLE-BIT-4.1.0-Darwin*      
+        path: build/BEAGLE*-4.1.0-Darwin*      
