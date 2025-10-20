@@ -50,7 +50,7 @@ jobs:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: 'bfb02e6b-5dbd-4421-9d94-e759a517de38'
           project-slug: 'beagle-lib'
-          signing-policy-slug: 'test-signing'
+          signing-policy-slug: 'release-signing'
           github-artifact-id: '${{ steps.upload-unsigned-bit-installer-artifact.outputs.artifact-id }}'
           wait-for-completion: true
           output-artifact-directory: 'build-bit-signed'    
@@ -86,7 +86,7 @@ jobs:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: 'bfb02e6b-5dbd-4421-9d94-e759a517de38'
           project-slug: 'beagle-lib'
-          signing-policy-slug: 'test-signing'
+          signing-policy-slug: 'release-signing'
           github-artifact-id: '${{ steps.upload-unsigned-beagle-installer-artifact.outputs.artifact-id }}'
           wait-for-completion: true
           output-artifact-directory: 'build-signed'
