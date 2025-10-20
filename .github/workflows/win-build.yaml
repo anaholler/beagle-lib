@@ -20,10 +20,10 @@ jobs:
         with:
           toolset: '14.44'
       
-      - uses: Jimver/cuda-toolkit@v0.2.24
-        id: cuda-toolkit
-        with:
-          cuda: '12.5.0'         
+#       - uses: Jimver/cuda-toolkit@v0.2.24
+#         id: cuda-toolkit
+#         with:
+#           cuda: '12.5.0'         
       
       # Build BEAGLE with backwards-in-time support      
       
@@ -47,7 +47,7 @@ jobs:
         id: optional_bit_step_id
         uses: signpath/github-action-submit-signing-request@v1.1
         with:
-          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN2 }}'
           organization-id: 'bfb02e6b-5dbd-4421-9d94-e759a517de38'
           project-slug: 'beagle-lib'
           signing-policy-slug: 'release-signing'
@@ -83,7 +83,7 @@ jobs:
         id: optional_beagle_step_id
         uses: signpath/github-action-submit-signing-request@v1.1
         with:
-          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN2 }}'
           organization-id: 'bfb02e6b-5dbd-4421-9d94-e759a517de38'
           project-slug: 'beagle-lib'
           signing-policy-slug: 'release-signing'
